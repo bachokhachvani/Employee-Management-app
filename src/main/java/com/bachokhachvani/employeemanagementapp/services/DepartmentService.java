@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -17,8 +18,8 @@ public class DepartmentService {
         DepartmentRepository = departmentRepository;
     }
 
-    public List<DepartmentModel> getAllDepartment(){
-        return DepartmentRepository.findAll();
+    public Optional<DepartmentModel> getDepartmentByName(String department){
+        return DepartmentRepository.findByName(department);
     }
 
 

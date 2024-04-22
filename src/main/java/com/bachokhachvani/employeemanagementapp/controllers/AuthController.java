@@ -25,13 +25,13 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<UserModel> Register(@RequestBody UserDTO user) {
+    public ResponseEntity<String> Register(@RequestBody UserDTO user) {
         UserModel userModel = new UserModel();
         userModel.setUsername(user.getUsername());
         userModel.setPassword(user.getPassword());
 
-        UserModel savedUser = userService.addUser(userModel, user.getRoleName());
-        return ResponseEntity.ok(savedUser);
+        userService.addUser(userModel, user.getRoleName());
+        return ResponseEntity.ok("User Created Successfully!");
     }
 
 
@@ -41,7 +41,6 @@ public class AuthController {
         var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenGenerator.generateToken(authentication);
-
         return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 

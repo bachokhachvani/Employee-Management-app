@@ -21,7 +21,7 @@ public class UserModel implements UserDetails {
     @Column(name = "USERID")
     private Integer userId;
 
-    @Column(name = "USERNAME", length = 20, nullable = false)
+    @Column(name = "USERNAME", length = 20, nullable = false, unique = true)
     private String username;
 
     @Column(name = "PASSWORD", length = 60, nullable = false)
@@ -38,7 +38,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> role.getName());
+        return List.of(() -> "ROLE_" + role.getName());
     }
 
     @Override

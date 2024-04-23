@@ -6,8 +6,9 @@ import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
 import com.bachokhachvani.employeemanagementapp.repositories.EmployeeRepository;
 import com.bachokhachvani.employeemanagementapp.repositories.UserRepository;
 import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,18 +18,22 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private final UserRepository userRepository;
 
     public List<EmployeeModel> allEmployees() {
         return employeeRepository.findAll();
     }
 
     public void addEmployee(EmployeeDTO employeeDTO) {
-        var employee=employeeMapper.fromDTO(employeeDTO);
-        employeeRepository.save(employee);
+        if (employeeRepository.findById(employeeMapper.currentUserID()).isEmpty()) {
+            var employee = employeeMapper.fromDTO(employeeDTO, employeeMapper.currentUserID(), new EmployeeModel());
+            employeeRepository.save(employee);
+        }
+        throw new RuntimeException("you can't change your details");
     }
 
     public void updateContactInfo(EmployeeContactInfoDTO contactInfo) {
-        var id=employeeMapper.currentUserID();
+        var id = employeeMapper.currentUserID();
         EmployeeModel employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
@@ -40,6 +45,39 @@ public class EmployeeService {
         }
 
         employeeRepository.save(employee);
+    }
+
+    public void updateEmployee(EmployeeDTO employeeDTO, Integer employeeID) {
+        var employee = employeeRepository.findById(employeeID).orElseThrow(() -> new RuntimeException("Employee not found"));
+        employee = employeeMapper.fromDTO(employeeDTO, employeeID, employee);
+        employeeRepository.save(employee);
+
+    }
+
+    public EmployeeDTO findEmployeeById(Integer employeeID) {
+        var employee = employeeRepository.findById(employeeID).orElseThrow(() -> new RuntimeException("Employee not found"));
+        var employeeDTO = employeeMapper.toDTO(employee);
+        if (employee.getManager().getName().isEmpty()) {
+            employeeDTO.setManagerName(null);
+        } else {
+            employeeDTO.setManagerName(employee.getManager().getName());
+        }
+        return employeeDTO;
+    }
+
+    @Transactional
+    public void deleteEmployee(Integer employeeID) throws DataIntegrityViolationException {
+        try {
+            List<EmployeeModel> subordinates = employeeRepository.findByManagerId(employeeID).orElseThrow(() -> new RuntimeException("Employees not found"));
+            for (EmployeeModel subordinate : subordinates) {
+                subordinate.setManager(null);
+                employeeRepository.save(subordinate);
+            }
+            employeeRepository.deleteById(employeeID);
+            userRepository.deleteById(employeeID);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user and employee with ID: " + employeeID, e);
+        }
     }
 
 }

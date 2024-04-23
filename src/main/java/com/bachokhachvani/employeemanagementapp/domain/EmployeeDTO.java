@@ -18,4 +18,5 @@ public class EmployeeDTO {
     private String department;
     private String position;
     private String managerEmail;
+    private String managerName;
 }

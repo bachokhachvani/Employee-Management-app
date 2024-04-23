@@ -43,17 +43,33 @@ public class EmployeeMapper {
         return dto;
     }
 
-    public EmployeeModel fromDTO(EmployeeDTO dto) {
-        EmployeeModel employee = new EmployeeModel();
-        employee.setName(dto.getName());
-        employee.setPhone(dto.getPhone());
-        employee.setBirthday(dto.getBirthday());
-        employee.setEmail(dto.getEmail());
-        employee.setHireDate(dto.getHireDate());
-        employee.setSalary(dto.getSalary());
-        employee.setId(userRepository.findByUsername(SecurityContextHolder
-                        .getContext().getAuthentication().getName())
-                .orElseThrow(() -> new RuntimeException("User Not Found")).getUserId());
+    public EmployeeModel fromDTO(EmployeeDTO dto, Integer id, EmployeeModel employee) {
+//        employee.setName(dto.getName());
+//        employee.setPhone(dto.getPhone());
+//        employee.setBirthday(dto.getBirthday());
+//        employee.setEmail(dto.getEmail());
+//        employee.setHireDate(dto.getHireDate());
+//        employee.setSalary(dto.getSalary());
+        if (dto.getName() != null) {
+            employee.setName(dto.getName());
+        }
+        if (dto.getPhone() != null) {
+            employee.setPhone(dto.getPhone());
+        }
+        if (dto.getBirthday() != null) {
+            employee.setBirthday(dto.getBirthday());
+        }
+        if (dto.getEmail() != null) {
+            employee.setEmail(dto.getEmail());
+        }
+        if (dto.getHireDate() != null) {
+            employee.setHireDate(dto.getHireDate());
+        }
+        if (dto.getSalary() != null) {
+            employee.setSalary(dto.getSalary());
+        }
+
+        employee.setId(id);
 
         if (dto.getDepartment() != null) {
             Optional<DepartmentModel> department = departmentRepository.findByName(dto.getDepartment());

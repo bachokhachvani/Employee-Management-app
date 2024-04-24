@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,7 +20,8 @@ public class UserService {
 
     public void addUser(UserModel user, String roleName) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
-        RoleModel role = roleRepository.findByName(roleName)
+        RoleModel role;
+        role = roleRepository.findByName(Objects.requireNonNullElse(roleName, "EMPLOYEE"))
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.setPassword(encodedPassword);
         user.setRole(role);

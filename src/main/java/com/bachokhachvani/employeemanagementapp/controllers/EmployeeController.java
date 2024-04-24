@@ -37,8 +37,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/my-profile")
-    public UserModel getMyProfile() {
-        return userService.getUsersByName(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new RuntimeException("User not found"));
+    public EmployeeDTO getMyProfile() {
+        return employeeService.getCurrentEmployeeDetails();
     }
 
     @PatchMapping("/my-profile")

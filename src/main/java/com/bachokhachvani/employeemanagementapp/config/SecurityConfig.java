@@ -36,16 +36,6 @@ public class SecurityConfig {
     private JwtAuthEntryPoint authEntryPoint;
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); // Adjust accordingly for production
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        return request -> configuration;
-    }
-
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -62,7 +52,7 @@ public class SecurityConfig {
                                 .authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .cors(withDefaults()).csrf(AbstractHttpConfigurer::disable).build();
+                .csrf(AbstractHttpConfigurer::disable).build();
     }
 
 

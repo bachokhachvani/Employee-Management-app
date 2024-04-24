@@ -57,7 +57,7 @@ public class EmployeeService {
     public EmployeeDTO findEmployeeById(Integer employeeID) {
         var employee = employeeRepository.findById(employeeID).orElseThrow(() -> new RuntimeException("Employee not found"));
         var employeeDTO = employeeMapper.toDTO(employee);
-        if (employee.getManager().getName().isEmpty()) {
+        if (employee.getManager()==null) {
             employeeDTO.setManagerName(null);
         } else {
             employeeDTO.setManagerName(employee.getManager().getName());
@@ -78,6 +78,17 @@ public class EmployeeService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete user and employee with ID: " + employeeID, e);
         }
+    }
+
+    public EmployeeDTO getCurrentEmployeeDetails() {
+        var employee = employeeRepository.findById(employeeMapper.currentUserID()).orElseThrow(() -> new RuntimeException("Employee not found"));
+        var employeeDTO = employeeMapper.toDTO(employee);
+        if (employee.getManager() == null) {
+            employeeDTO.setManagerName(null);
+        } else {
+            employeeDTO.setManagerName(employee.getManager().getName());
+        }
+        return employeeDTO;
     }
 
 }

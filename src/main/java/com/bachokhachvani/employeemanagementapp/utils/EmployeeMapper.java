@@ -79,9 +79,10 @@ public class EmployeeMapper {
             Optional<PositionModel> position = positionRepository.findByName(dto.getPosition());
             employee.setPosition(position.orElseThrow(() -> new RuntimeException("Position not found")));
         }
-        if (dto.getManagerEmail() != null) {
+        if (dto.getManagerEmail() != null&& !dto.getManagerEmail().isEmpty()) {
             Optional<EmployeeModel> manager = employeeRepository.findByEmail(dto.getManagerEmail());
             employee.setManager(manager.orElseThrow(() -> new RuntimeException("Manager not found")));
+
         }
         return employee;
     }

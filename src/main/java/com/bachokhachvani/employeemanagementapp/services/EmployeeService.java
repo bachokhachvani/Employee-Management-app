@@ -28,8 +28,9 @@ public class EmployeeService {
         if (employeeRepository.findById(employeeMapper.currentUserID()).isEmpty()) {
             var employee = employeeMapper.fromDTO(employeeDTO, employeeMapper.currentUserID(), new EmployeeModel());
             employeeRepository.save(employee);
+        }else{
+            throw new RuntimeException("you can't change your details");
         }
-        throw new RuntimeException("you can't change your details");
     }
 
     public void updateContactInfo(EmployeeContactInfoDTO contactInfo) {

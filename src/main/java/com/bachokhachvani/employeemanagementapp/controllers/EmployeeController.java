@@ -3,13 +3,12 @@ package com.bachokhachvani.employeemanagementapp.controllers;
 import com.bachokhachvani.employeemanagementapp.domain.EmployeeContactInfoDTO;
 import com.bachokhachvani.employeemanagementapp.domain.EmployeeDTO;
 import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
-import com.bachokhachvani.employeemanagementapp.models.UserModel;
 import com.bachokhachvani.employeemanagementapp.services.EmployeeService;
 import com.bachokhachvani.employeemanagementapp.services.UserService;
+import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +16,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 public class EmployeeController {
+    private final EmployeeMapper employeeMapper;
     private EmployeeService employeeService;
     private UserService userService;
 
@@ -66,8 +66,12 @@ public class EmployeeController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @DeleteMapping("/employee/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable Integer id) {
-        employeeService.deleteEmployee(id);
-        return ResponseEntity.ok("Deleted");
+    public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
+        try {
+            employeeService.deleteEmployee(id);
+            return ResponseEntity.ok("Deleted");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

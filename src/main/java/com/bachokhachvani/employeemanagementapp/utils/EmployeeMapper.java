@@ -1,6 +1,7 @@
 package com.bachokhachvani.employeemanagementapp.utils;
 
 import com.bachokhachvani.employeemanagementapp.domain.EmployeeDTO;
+import com.bachokhachvani.employeemanagementapp.exceptions.ResourceNotFoundException;
 import com.bachokhachvani.employeemanagementapp.models.DepartmentModel;
 import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
 import com.bachokhachvani.employeemanagementapp.models.PositionModel;
@@ -10,6 +11,7 @@ import com.bachokhachvani.employeemanagementapp.repositories.PositionRepository;
 import com.bachokhachvani.employeemanagementapp.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,7 +28,7 @@ public class EmployeeMapper {
     public int currentUserID() {
         return userRepository.findByUsername(SecurityContextHolder
                         .getContext().getAuthentication().getName())
-                .orElseThrow(() -> new RuntimeException("User Not Found")).getUserId();
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found")).getUserId();
     }
 
     public EmployeeDTO toDTO(EmployeeModel employee) {
@@ -44,12 +46,6 @@ public class EmployeeMapper {
     }
 
     public EmployeeModel fromDTO(EmployeeDTO dto, Integer id, EmployeeModel employee) {
-//        employee.setName(dto.getName());
-//        employee.setPhone(dto.getPhone());
-//        employee.setBirthday(dto.getBirthday());
-//        employee.setEmail(dto.getEmail());
-//        employee.setHireDate(dto.getHireDate());
-//        employee.setSalary(dto.getSalary());
         if (dto.getName() != null) {
             employee.setName(dto.getName());
         }
@@ -73,15 +69,15 @@ public class EmployeeMapper {
 
         if (dto.getDepartment() != null) {
             Optional<DepartmentModel> department = departmentRepository.findByName(dto.getDepartment());
-            employee.setDepartment(department.orElseThrow(() -> new RuntimeException("Department not found")));
+            employee.setDepartment(department.orElseThrow(() -> new ResourceNotFoundException("Department not found")));
         }
         if (dto.getPosition() != null) {
             Optional<PositionModel> position = positionRepository.findByName(dto.getPosition());
-            employee.setPosition(position.orElseThrow(() -> new RuntimeException("Position not found")));
+            employee.setPosition(position.orElseThrow(() -> new ResourceNotFoundException("Position not found")));
         }
-        if (dto.getManagerEmail() != null&& !dto.getManagerEmail().isEmpty()) {
+        if (dto.getManagerEmail() != null && !dto.getManagerEmail().isEmpty()) {
             Optional<EmployeeModel> manager = employeeRepository.findByEmail(dto.getManagerEmail());
-            employee.setManager(manager.orElseThrow(() -> new RuntimeException("Manager not found")));
+            employee.setManager(manager.orElseThrow(() -> new ResourceNotFoundException("Manager not found")));
 
         }
         return employee;

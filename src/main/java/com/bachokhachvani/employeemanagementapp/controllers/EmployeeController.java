@@ -28,12 +28,8 @@ public class EmployeeController {
 
     @PostMapping("/add-details")
     public ResponseEntity<?> addEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        try {
-            employeeService.addEmployee(employeeDTO);
-            return ResponseEntity.ok(employeeDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        employeeService.addEmployee(employeeDTO);
+        return ResponseEntity.ok(employeeDTO);
     }
 
     @GetMapping("/my-profile")
@@ -57,21 +53,13 @@ public class EmployeeController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/employee/{id}")
     public ResponseEntity<?> getEmployee(@PathVariable Integer id) {
-        try {
-            return ResponseEntity.ok(employeeService.findEmployeeById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(employeeService.findEmployeeById(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @DeleteMapping("/employee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
-        try {
-            employeeService.deleteEmployee(id);
-            return ResponseEntity.ok("Deleted");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.ok("Deleted");
     }
 }

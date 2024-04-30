@@ -23,7 +23,6 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     private TokenGenerator tokenGenerator;
 
-
     @PostMapping("/register")
     public ResponseEntity<String> Register(@RequestBody UserDTO user) {
         UserModel userModel = new UserModel();
@@ -33,7 +32,6 @@ public class AuthController {
         userService.addUser(userModel, user.getRoleName());
         return ResponseEntity.ok("User Created Successfully!");
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO login) {

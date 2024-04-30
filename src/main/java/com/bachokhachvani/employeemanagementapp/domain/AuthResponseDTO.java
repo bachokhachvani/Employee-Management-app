@@ -1,6 +1,5 @@
 package com.bachokhachvani.employeemanagementapp.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

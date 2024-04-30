@@ -33,10 +33,6 @@ public class UserModel implements UserDetails {
     @JoinColumn(name = "ROLEID", nullable = false)
     private RoleModel role;
 
-    @Getter
-    @OneToMany(mappedBy = "user")
-    private List<TokenModel> tokens;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> "ROLE_" + role.getName());

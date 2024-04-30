@@ -16,7 +16,6 @@ public class DepartmentModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "DEPARTMENTID")
     private Integer departmentId;
-
     @Column(name = "NAME", length = 20)
     private String name;
 

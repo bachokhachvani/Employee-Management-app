@@ -4,8 +4,6 @@ import com.bachokhachvani.employeemanagementapp.domain.EmployeeContactInfoDTO;
 import com.bachokhachvani.employeemanagementapp.domain.EmployeeDTO;
 import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
 import com.bachokhachvani.employeemanagementapp.services.EmployeeService;
-import com.bachokhachvani.employeemanagementapp.services.UserService;
-import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,10 +14,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 public class EmployeeController {
-    private final EmployeeMapper employeeMapper;
     private EmployeeService employeeService;
-    private UserService userService;
-
 
     @GetMapping("/employee")
     public List<EmployeeModel> allEmployees() {

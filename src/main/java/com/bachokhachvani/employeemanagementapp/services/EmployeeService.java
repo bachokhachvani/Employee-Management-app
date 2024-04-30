@@ -12,6 +12,7 @@ import com.bachokhachvani.employeemanagementapp.repositories.UserRepository;
 import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +25,9 @@ public class EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final UserRepository userRepository;
 
-    public List<EmployeeModel> allEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeModel> allEmployees(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return employeeRepository.findAll(pageRequest).getContent();
     }
 
     public void addEmployee(EmployeeDTO employeeDTO) {

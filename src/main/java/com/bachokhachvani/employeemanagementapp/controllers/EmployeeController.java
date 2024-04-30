@@ -17,8 +17,9 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @GetMapping("/employee")
-    public List<EmployeeModel> allEmployees() {
-        return employeeService.allEmployees();
+    public List<EmployeeModel> allEmployees(@RequestParam(value = "page", defaultValue = "0") int page,
+                                            @RequestParam(value = "size", defaultValue = "20") int size) {
+        return employeeService.allEmployees(page,size);
     }
 
     @PostMapping("/add-details")

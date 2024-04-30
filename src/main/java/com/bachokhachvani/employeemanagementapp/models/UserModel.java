@@ -1,9 +1,7 @@
 package com.bachokhachvani.employeemanagementapp.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +11,10 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
-@Table(name = "user")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "`user`")
 public class UserModel implements UserDetails {
     @Getter
     @Id

@@ -1,8 +1,14 @@
 package com.bachokhachvani.employeemanagementapp.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Setter
+@Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "role")
 public class RoleModel {
     @Id
@@ -13,19 +19,4 @@ public class RoleModel {
     @Column(name = "NAME", length = 20)
     private String name;
 
-    public Integer getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

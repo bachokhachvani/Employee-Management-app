@@ -1,7 +1,13 @@
 package com.bachokhachvani.employeemanagementapp.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "position")
 public class PositionModel {
@@ -14,19 +20,4 @@ public class PositionModel {
         @Column(name = "NAME", length = 20, nullable = false)
         private String name;
 
-    public Integer getPositionId() {
-        return positionId;
-    }
-
-    public void setPositionId(Integer positionId) {
-        this.positionId = positionId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

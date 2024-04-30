@@ -1,8 +1,14 @@
 package com.bachokhachvani.employeemanagementapp.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "department")
 public class DepartmentModel {
@@ -14,19 +20,4 @@ public class DepartmentModel {
     @Column(name = "NAME", length = 20)
     private String name;
 
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

@@ -8,6 +8,9 @@ import java.sql.Date;
 @Setter
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "employee")
 public class EmployeeModel {
     @Id

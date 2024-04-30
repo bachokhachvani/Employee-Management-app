@@ -21,8 +21,7 @@ public class TokenGenerator {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         Date expiryDate = new Date(now.getTime() + SecurityConstants.TOKEN_EXPIRATION);
-        String token = Jwts.builder().subject(username).claim("authorities", authorities).expiration(expiryDate).issuedAt(now).signWith(SecurityConstants.SECRET_KEY).compact();
-        return token;
+        return Jwts.builder().subject(username).claim("authorities", authorities).expiration(expiryDate).issuedAt(now).signWith(SecurityConstants.SECRET_KEY).compact();
     }
 
     public String getUsernameFromToken(String token) {

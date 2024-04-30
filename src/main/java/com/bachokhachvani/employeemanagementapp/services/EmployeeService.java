@@ -55,7 +55,7 @@ public class EmployeeService {
     public void updateEmployee(EmployeeDTO employeeDTO, Integer employeeID) {
         var employee = employeeRepository.findById(employeeID).orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
         employee = employeeMapper.fromDTO(employeeDTO, employeeID, employee);
-        if (Objects.equals(employee.getId(), employeeID)) {
+        if (Objects.equals(employeeMapper.currentUserID(), employeeID)) {
             throw new DetailsChangeRestrictedException("You can't change your details");
         }
         employeeRepository.save(employee);

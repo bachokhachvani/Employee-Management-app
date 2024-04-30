@@ -131,6 +131,7 @@ public class EmployeeServiceTest {
                 .build();
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(existingEmployee));
         when(employeeMapper.fromDTO(any(EmployeeDTO.class), eq(employeeId), any(EmployeeModel.class))).thenReturn(existingEmployee);
+        when(employeeMapper.currentUserID()).thenReturn(employeeId);
         Exception exception = assertThrows(DetailsChangeRestrictedException.class, () -> {
             employeeService.updateEmployee(employeeDTO, existingEmployee.getId());
         });

@@ -1,13 +1,11 @@
 package com.bachokhachvani.employeemanagementapp.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.sql.Date;
 
 
-@Getter
-@Setter
+@Data
 public class EmployeeDTO {
     private String name;
     private Integer phone;

@@ -4,8 +4,7 @@ import com.bachokhachvani.employeemanagementapp.domain.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Builder
 @AllArgsConstructor

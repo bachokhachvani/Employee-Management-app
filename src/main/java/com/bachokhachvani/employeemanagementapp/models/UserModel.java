@@ -8,12 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Setter
+
 @ToString
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(name = "`user`")
 public class UserModel implements UserDetails {
     @Getter

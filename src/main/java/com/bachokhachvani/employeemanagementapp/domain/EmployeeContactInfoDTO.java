@@ -1,11 +1,10 @@
 package com.bachokhachvani.employeemanagementapp.domain;
 
 import jakarta.validation.constraints.Email;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+
+@Data
 public class EmployeeContactInfoDTO {
     private Integer phone;
     @Email(message = "Email should be valid")

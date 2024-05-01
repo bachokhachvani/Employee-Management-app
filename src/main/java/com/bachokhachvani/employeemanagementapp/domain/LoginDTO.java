@@ -1,10 +1,8 @@
 package com.bachokhachvani.employeemanagementapp.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class LoginDTO {
     private String username;
     private String password;

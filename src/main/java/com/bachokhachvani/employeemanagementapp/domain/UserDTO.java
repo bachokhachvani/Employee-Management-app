@@ -1,13 +1,10 @@
 package com.bachokhachvani.employeemanagementapp.domain;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 public class UserDTO {
 
     @NotBlank(message = "Username must not be empty")

@@ -9,9 +9,9 @@ import com.bachokhachvani.employeemanagementapp.exceptions.FailedToDeleteExcepti
 import com.bachokhachvani.employeemanagementapp.models.DepartmentModel;
 import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
 import com.bachokhachvani.employeemanagementapp.models.PositionModel;
+import com.bachokhachvani.employeemanagementapp.models.UserModel;
 import com.bachokhachvani.employeemanagementapp.repositories.EmployeeRepository;
 import com.bachokhachvani.employeemanagementapp.repositories.UserRepository;
-import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
 import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapperMap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.sql.Date;
 import java.util.List;
@@ -28,9 +31,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class EmployeeServiceTest {
@@ -40,8 +41,6 @@ public class EmployeeServiceTest {
     @Mock
     UserRepository userRepository;
     @Mock
-    EmployeeMapper employeeMapper;
-    @Mock
     EmployeeMapperMap employeeMapperMap;
     EmployeeService employeeService;
     private AutoCloseable closeable;
@@ -49,7 +48,16 @@ public class EmployeeServiceTest {
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        employeeService = new EmployeeService(employeeRepository, employeeMapper, userRepository,employeeMapperMap);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("testUser");
+        SecurityContextHolder.setContext(securityContext);
+        UserModel userModel = new UserModel();
+        userModel.setUserId(1);
+        when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(userModel));
+        employeeService = new EmployeeService(employeeRepository, userRepository, employeeMapperMap);
+
     }
 
     @AfterEach
@@ -64,7 +72,6 @@ public class EmployeeServiceTest {
 
     @Test
     void testAddEmployee() {
-        int mockUserId = 1;
         var department1 = DepartmentModel.builder().name("ANALYTICS").build();
         var position1 = PositionModel.builder().name("ANALYST").build();
         var mockEmployee = EmployeeModel.builder()
@@ -77,7 +84,6 @@ public class EmployeeServiceTest {
                 name("test1")
                 .salary(2000.0).build();
         EmployeeDTO employeeDTO = new EmployeeDTO();
-        when(employeeMapper.currentUserID()).thenReturn(mockUserId);
         when(employeeMapperMap.fromDTO(any(EmployeeDTO.class))).thenReturn(mockEmployee);
         when(employeeRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
         when(employeeRepository.save(any(EmployeeModel.class))).thenReturn(mockEmployee);
@@ -105,7 +111,6 @@ public class EmployeeServiceTest {
                 .position(position1).
                 name("test1")
                 .salary(2000.0).build();
-        when(employeeMapper.currentUserID()).thenReturn(mockUserId);
         when(employeeRepository.findById(mockUserId)).thenReturn(Optional.of(existingEmployee));
         employeeService.updateContactInfo(contactInfo);
         ArgumentCaptor<EmployeeModel> employeeCaptor = ArgumentCaptor.forClass(EmployeeModel.class);
@@ -117,7 +122,7 @@ public class EmployeeServiceTest {
 
     @Test
     void testUpdateEmployee() {
-        int employeeId = 2;
+        int employeeId = 1;
         EmployeeDTO employeeDTO = new EmployeeDTO();
         DepartmentModel department1 = DepartmentModel.builder().name("ANALYTICS").build();
         PositionModel position1 = PositionModel.builder().name("ANALYST").build();
@@ -134,7 +139,6 @@ public class EmployeeServiceTest {
                 .build();
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(existingEmployee));
         when(employeeMapperMap.fromDTO(any(EmployeeDTO.class))).thenReturn(existingEmployee);
-        when(employeeMapper.currentUserID()).thenReturn(employeeId);
         Exception exception = assertThrows(DetailsChangeRestrictedException.class, () -> {
             employeeService.updateEmployee(employeeDTO, existingEmployee.getId());
         });
@@ -172,14 +176,12 @@ public class EmployeeServiceTest {
     @Test
     void testDeleteEmployee() {
         int currentUserId = 1;
-        when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         assertThrows(ActionForbiddenException.class, () -> employeeService.deleteEmployee(currentUserId));
     }
 
     @Test
     void testDeleteNonExistentEmployee() {
         int employeeId = 999;
-        when(employeeMapper.currentUserID()).thenReturn(1);
         when(employeeRepository.findByManagerId(employeeId)).thenReturn(Optional.empty());
         assertThrows(FailedToDeleteException.class, () -> employeeService.deleteEmployee(employeeId));
     }
@@ -190,7 +192,6 @@ public class EmployeeServiceTest {
         int currentUserId = 1;
         EmployeeModel subordinate = new EmployeeModel();
         subordinate.setId(3);
-        when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         when(employeeRepository.findByManagerId(employeeId)).thenReturn(Optional.of(List.of(subordinate)));
         employeeService.deleteEmployee(employeeId);
         verify(employeeRepository).save(subordinate);
@@ -201,7 +202,6 @@ public class EmployeeServiceTest {
     @Test
     void testDeleteEmployeeHandlingExceptions() {
         int employeeId = 2;
-        when(employeeMapper.currentUserID()).thenReturn(1);
         when(employeeRepository.findByManagerId(employeeId)).thenThrow(new RuntimeException("Database error"));
         assertThrows(FailedToDeleteException.class, () -> employeeService.deleteEmployee(employeeId));
     }
@@ -216,7 +216,6 @@ public class EmployeeServiceTest {
         currentEmployee.setManager(manager);
         EmployeeDTO expectedDTO = new EmployeeDTO();
         expectedDTO.setManagerName("Manager Name");
-        when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         when(employeeRepository.findById(currentUserId)).thenReturn(Optional.of(currentEmployee));
         when(employeeMapperMap.toDTO(currentEmployee)).thenReturn(expectedDTO);
         EmployeeDTO resultDTO = employeeService.getCurrentEmployeeDetails();
@@ -232,7 +231,6 @@ public class EmployeeServiceTest {
         currentEmployee.setManager(null);
         EmployeeDTO expectedDTO = new EmployeeDTO();
         expectedDTO.setManagerName(null);
-        when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         when(employeeRepository.findById(currentUserId)).thenReturn(Optional.of(currentEmployee));
         when(employeeMapperMap.toDTO(currentEmployee)).thenReturn(expectedDTO);
         EmployeeDTO resultDTO = employeeService.getCurrentEmployeeDetails();
@@ -243,7 +241,6 @@ public class EmployeeServiceTest {
     @Test
     void testGetCurrentEmployeeDetails_NotFound() {
         int currentUserId = 999;
-        when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         when(employeeRepository.findById(currentUserId)).thenReturn(Optional.empty());
         assertThrows(EmployeeNotFoundException.class, () -> {
             employeeService.getCurrentEmployeeDetails();

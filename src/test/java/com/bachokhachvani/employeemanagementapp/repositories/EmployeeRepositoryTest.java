@@ -1,5 +1,6 @@
 package com.bachokhachvani.employeemanagementapp.repositories;
 
+import com.bachokhachvani.employeemanagementapp.domain.Role;
 import com.bachokhachvani.employeemanagementapp.exceptions.EmployeeNotFoundException;
 import com.bachokhachvani.employeemanagementapp.exceptions.UserRoleNotFoundException;
 import com.bachokhachvani.employeemanagementapp.models.*;
@@ -33,9 +34,9 @@ class EmployeeRepositoryTest {
     public static void setup(@Autowired UserRepository userRepository,
                              @Autowired RoleRepository roleRepository) {
         if (!dataLoaded) {
-            roleRepository.save(RoleModel.builder().name("ADMIN").build());
-            roleRepository.save(RoleModel.builder().name("EMPLOYEE").build());
-            var role = roleRepository.findByName("ADMIN")
+            roleRepository.save(RoleModel.builder().name(Role.ADMIN).build());
+            roleRepository.save(RoleModel.builder().name(Role.EMPLOYEE).build());
+            var role = roleRepository.findByName(Role.ADMIN)
                     .orElseThrow(() -> new UserRoleNotFoundException("User Role not found"));
             var user1 = UserModel.builder().username("Test1").password("test1").userId(1).role(role).build();
             var user2 = UserModel.builder().username("Test2").password("test2").userId(2).role(role).build();

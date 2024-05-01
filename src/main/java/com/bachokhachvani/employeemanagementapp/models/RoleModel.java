@@ -1,5 +1,6 @@
 package com.bachokhachvani.employeemanagementapp.models;
 
+import com.bachokhachvani.employeemanagementapp.domain.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,10 +14,11 @@ import lombok.*;
 public class RoleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ROLEID")
+    @Column(name = "ROLE_ID")
     private Integer roleId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "NAME", length = 20)
-    private String name;
+    private Role name;
 
 }

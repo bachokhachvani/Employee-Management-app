@@ -14,7 +14,7 @@ import lombok.*;
 public class DepartmentModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "DEPARTMENTID")
+    @Column(name = "DEPARTMENT_ID")
     private Integer departmentId;
     @Column(name = "NAME", length = 20)
     private String name;

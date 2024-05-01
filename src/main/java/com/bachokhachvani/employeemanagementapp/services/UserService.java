@@ -1,5 +1,6 @@
 package com.bachokhachvani.employeemanagementapp.services;
 
+import com.bachokhachvani.employeemanagementapp.domain.Role;
 import com.bachokhachvani.employeemanagementapp.exceptions.UserRoleNotFoundException;
 import com.bachokhachvani.employeemanagementapp.models.RoleModel;
 import com.bachokhachvani.employeemanagementapp.models.UserModel;
@@ -19,10 +20,10 @@ public class UserService {
     private RoleRepository roleRepository;
 
 
-    public void addUser(UserModel user, String roleName){
+    public void addUser(UserModel user, Role roleName){
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         RoleModel role;
-        role = roleRepository.findByName(Objects.requireNonNullElse(roleName, "EMPLOYEE"))
+        role = roleRepository.findByName(Objects.requireNonNullElse(roleName, Role.EMPLOYEE))
                 .orElseThrow(() -> new UserRoleNotFoundException("User Role not found"));
         user.setPassword(encodedPassword);
         user.setRole(role);

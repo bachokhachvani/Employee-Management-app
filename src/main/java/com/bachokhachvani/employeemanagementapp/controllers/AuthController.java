@@ -6,6 +6,7 @@ import com.bachokhachvani.employeemanagementapp.domain.UserDTO;
 import com.bachokhachvani.employeemanagementapp.models.UserModel;
 import com.bachokhachvani.employeemanagementapp.security.TokenGenerator;
 import com.bachokhachvani.employeemanagementapp.services.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +25,7 @@ public class AuthController {
     private TokenGenerator tokenGenerator;
 
     @PostMapping("/register")
-    public ResponseEntity<String> Register(@RequestBody UserDTO user) {
+    public ResponseEntity<String> register(@Valid @RequestBody UserDTO user) {
         UserModel userModel = new UserModel();
         userModel.setUsername(user.getUsername());
         userModel.setPassword(user.getPassword());

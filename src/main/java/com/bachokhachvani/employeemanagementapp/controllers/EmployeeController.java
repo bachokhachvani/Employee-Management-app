@@ -4,6 +4,7 @@ import com.bachokhachvani.employeemanagementapp.domain.EmployeeContactInfoDTO;
 import com.bachokhachvani.employeemanagementapp.domain.EmployeeDTO;
 import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
 import com.bachokhachvani.employeemanagementapp.services.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +35,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/my-profile")
-    public ResponseEntity<String> updateMyProfile(@RequestBody EmployeeContactInfoDTO employeeContactInfoDTO) {
+    public ResponseEntity<String> updateMyProfile(@Valid @RequestBody EmployeeContactInfoDTO employeeContactInfoDTO) {
         employeeService.updateContactInfo(employeeContactInfoDTO);
         return ResponseEntity.ok("Updated");
     }

@@ -19,7 +19,7 @@ public class UserModel implements UserDetails {
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USERID")
+    @Column(name = "USER_ID")
     private Integer userId;
 
     @Column(name = "USERNAME", length = 20, nullable = false, unique = true)
@@ -30,7 +30,7 @@ public class UserModel implements UserDetails {
 
     @Getter
     @ManyToOne
-    @JoinColumn(name = "ROLEID", nullable = false)
+    @JoinColumn(name = "ROLE_ID", nullable = false)
     private RoleModel role;
 
     @Override

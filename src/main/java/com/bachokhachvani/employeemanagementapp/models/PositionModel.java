@@ -14,7 +14,7 @@ public class PositionModel {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "POSITIONID")
+        @Column(name = "POSITION_ID")
         private Integer positionId;
 
         @Column(name = "NAME", length = 20, nullable = false)

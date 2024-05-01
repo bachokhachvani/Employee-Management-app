@@ -1,10 +1,10 @@
 package com.bachokhachvani.employeemanagementapp.repositories;
 
+import com.bachokhachvani.employeemanagementapp.domain.Role;
 import com.bachokhachvani.employeemanagementapp.exceptions.UserRoleNotFoundException;
 import com.bachokhachvani.employeemanagementapp.models.RoleModel;
 import com.bachokhachvani.employeemanagementapp.models.UserModel;
 import org.assertj.core.api.Assertions;
-import org.h2.engine.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class UserRepositoryTest {
     public static void setup(@Autowired UserRepository userRepository,
                              @Autowired RoleRepository roleRepository) {
         if (!dataLoaded) {
-            roleRepository.save(RoleModel.builder().name("ADMIN").build());
-            roleRepository.save(RoleModel.builder().name("EMPLOYEE").build());
+            roleRepository.save(RoleModel.builder().name(Role.ADMIN).build());
+            roleRepository.save(RoleModel.builder().name(Role.EMPLOYEE).build());
             dataLoaded = true;
         }
     }
@@ -39,7 +39,7 @@ public class UserRepositoryTest {
     @Test
     public void saveUser() {
         var role = roleRepository
-                .findByName("ADMIN")
+                .findByName(Role.ADMIN)
                 .orElseThrow(() -> new UserRoleNotFoundException("User Role not found"));
         var user = UserModel.builder().username("Test1").password("test1").role(role).build();
         UserModel savedUser = userRepository.save(user);
@@ -51,7 +51,7 @@ public class UserRepositoryTest {
     @Test
     public void findByUsername() {
         var role = roleRepository
-                .findByName("ADMIN")
+                .findByName(Role.ADMIN)
                 .orElseThrow(() -> new UserRoleNotFoundException("User Role not found"));
         var user = UserModel.builder().username("Test1").password("test1").role(role).build();
         UserModel savedUser = userRepository.save(user);

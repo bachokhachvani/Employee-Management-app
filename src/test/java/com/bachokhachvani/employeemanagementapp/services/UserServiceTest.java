@@ -1,4 +1,5 @@
 package com.bachokhachvani.employeemanagementapp.services;
+import com.bachokhachvani.employeemanagementapp.domain.Role;
 import com.bachokhachvani.employeemanagementapp.exceptions.UserRoleNotFoundException;
 import com.bachokhachvani.employeemanagementapp.models.RoleModel;
 import com.bachokhachvani.employeemanagementapp.models.UserModel;
@@ -35,13 +36,13 @@ class UserServiceTest {
 
     @Test
     void addUser_Success() {
-        String roleName = "ADMIN";
+        Role roleName = Role.ADMIN;
         UserModel user = new UserModel();
         user.setPassword("plainPassword");
         RoleModel role = new RoleModel();
         role.setName(roleName);
         when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
-        when(roleRepository.findByName("ADMIN")).thenReturn(Optional.of(role));
+        when(roleRepository.findByName(roleName)).thenReturn(Optional.of(role));
         userService.addUser(user, roleName);
         verify(passwordEncoder).encode("plainPassword");
         verify(roleRepository).findByName(roleName);
@@ -56,9 +57,9 @@ class UserServiceTest {
         UserModel user = new UserModel();
         user.setPassword("plainPassword");
         when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
-        when(roleRepository.findByName("NON_EXISTENT_ROLE")).thenReturn(Optional.empty());
+        when(roleRepository.findByName(null)).thenReturn(Optional.empty());
         assertThrows(UserRoleNotFoundException.class, () -> {
-            userService.addUser(user, roleName);
+            userService.addUser(user, null);
         });
         verify(userRepository, never()).save(any());
     }

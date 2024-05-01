@@ -40,7 +40,7 @@ public class EmployeeModel {
     private DepartmentModel department;
 
     @ManyToOne
-    @JoinColumn(name = "POSITIONID", nullable = false)
+    @JoinColumn(name = "POSITION_ID", nullable = false)
     private PositionModel position;
 
     @ManyToOne

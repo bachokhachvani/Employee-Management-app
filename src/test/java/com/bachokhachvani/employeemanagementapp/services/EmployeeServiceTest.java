@@ -139,9 +139,7 @@ public class EmployeeServiceTest {
                 .build();
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(existingEmployee));
         when(employeeMapperMap.fromDTO(any(EmployeeDTO.class))).thenReturn(existingEmployee);
-        Exception exception = assertThrows(DetailsChangeRestrictedException.class, () -> {
-            employeeService.updateEmployee(employeeDTO, existingEmployee.getId());
-        });
+        Exception exception = assertThrows(DetailsChangeRestrictedException.class, () -> employeeService.updateEmployee(employeeDTO, existingEmployee.getId()));
         assertTrue(exception.getMessage().contains("You can't change your details"));
     }
 
@@ -189,7 +187,6 @@ public class EmployeeServiceTest {
     @Test
     void testDeleteEmployeeWithSubordinates() {
         int employeeId = 2;
-        int currentUserId = 1;
         EmployeeModel subordinate = new EmployeeModel();
         subordinate.setId(3);
         when(employeeRepository.findByManagerId(employeeId)).thenReturn(Optional.of(List.of(subordinate)));
@@ -242,8 +239,6 @@ public class EmployeeServiceTest {
     void testGetCurrentEmployeeDetails_NotFound() {
         int currentUserId = 999;
         when(employeeRepository.findById(currentUserId)).thenReturn(Optional.empty());
-        assertThrows(EmployeeNotFoundException.class, () -> {
-            employeeService.getCurrentEmployeeDetails();
-        });
+        assertThrows(EmployeeNotFoundException.class, () -> employeeService.getCurrentEmployeeDetails());
     }
 }

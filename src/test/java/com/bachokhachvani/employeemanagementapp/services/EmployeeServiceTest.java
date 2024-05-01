@@ -12,6 +12,7 @@ import com.bachokhachvani.employeemanagementapp.models.PositionModel;
 import com.bachokhachvani.employeemanagementapp.repositories.EmployeeRepository;
 import com.bachokhachvani.employeemanagementapp.repositories.UserRepository;
 import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
+import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapperMap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,13 +41,15 @@ public class EmployeeServiceTest {
     UserRepository userRepository;
     @Mock
     EmployeeMapper employeeMapper;
+    @Mock
+    EmployeeMapperMap employeeMapperMap;
     EmployeeService employeeService;
     private AutoCloseable closeable;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        employeeService = new EmployeeService(employeeRepository, employeeMapper, userRepository);
+        employeeService = new EmployeeService(employeeRepository, employeeMapper, userRepository,employeeMapperMap);
     }
 
     @AfterEach
@@ -75,7 +78,7 @@ public class EmployeeServiceTest {
                 .salary(2000.0).build();
         EmployeeDTO employeeDTO = new EmployeeDTO();
         when(employeeMapper.currentUserID()).thenReturn(mockUserId);
-        when(employeeMapper.fromDTO(any(EmployeeDTO.class), any(Integer.class), any(EmployeeModel.class))).thenReturn(mockEmployee);
+        when(employeeMapperMap.fromDTO(any(EmployeeDTO.class))).thenReturn(mockEmployee);
         when(employeeRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
         when(employeeRepository.save(any(EmployeeModel.class))).thenReturn(mockEmployee);
         employeeService.addEmployee(employeeDTO);
@@ -130,7 +133,7 @@ public class EmployeeServiceTest {
                 .salary(2000.0)
                 .build();
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(existingEmployee));
-        when(employeeMapper.fromDTO(any(EmployeeDTO.class), eq(employeeId), any(EmployeeModel.class))).thenReturn(existingEmployee);
+        when(employeeMapperMap.fromDTO(any(EmployeeDTO.class))).thenReturn(existingEmployee);
         when(employeeMapper.currentUserID()).thenReturn(employeeId);
         Exception exception = assertThrows(DetailsChangeRestrictedException.class, () -> {
             employeeService.updateEmployee(employeeDTO, existingEmployee.getId());
@@ -158,12 +161,12 @@ public class EmployeeServiceTest {
         EmployeeDTO expectedDTO = new EmployeeDTO();
         expectedDTO.setManagerName("test2");
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(mockEmployee));
-        when(employeeMapper.toDTO(mockEmployee)).thenReturn(expectedDTO);
+        when(employeeMapperMap.toDTO(mockEmployee)).thenReturn(expectedDTO);
         EmployeeDTO resultDTO = employeeService.findEmployeeById(employeeId);
         assertNotNull(resultDTO);
         assertEquals("test2", resultDTO.getManagerName());
         verify(employeeRepository).findById(employeeId);
-        verify(employeeMapper).toDTO(mockEmployee);
+        verify(employeeMapperMap).toDTO(mockEmployee);
     }
 
     @Test
@@ -215,7 +218,7 @@ public class EmployeeServiceTest {
         expectedDTO.setManagerName("Manager Name");
         when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         when(employeeRepository.findById(currentUserId)).thenReturn(Optional.of(currentEmployee));
-        when(employeeMapper.toDTO(currentEmployee)).thenReturn(expectedDTO);
+        when(employeeMapperMap.toDTO(currentEmployee)).thenReturn(expectedDTO);
         EmployeeDTO resultDTO = employeeService.getCurrentEmployeeDetails();
         assertNotNull(resultDTO);
         assertEquals("Manager Name", resultDTO.getManagerName());
@@ -231,7 +234,7 @@ public class EmployeeServiceTest {
         expectedDTO.setManagerName(null);
         when(employeeMapper.currentUserID()).thenReturn(currentUserId);
         when(employeeRepository.findById(currentUserId)).thenReturn(Optional.of(currentEmployee));
-        when(employeeMapper.toDTO(currentEmployee)).thenReturn(expectedDTO);
+        when(employeeMapperMap.toDTO(currentEmployee)).thenReturn(expectedDTO);
         EmployeeDTO resultDTO = employeeService.getCurrentEmployeeDetails();
         assertNotNull(resultDTO);
         assertNull(resultDTO.getManagerName());

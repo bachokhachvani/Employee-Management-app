@@ -10,9 +10,12 @@ import com.bachokhachvani.employeemanagementapp.models.EmployeeModel;
 import com.bachokhachvani.employeemanagementapp.repositories.EmployeeRepository;
 import com.bachokhachvani.employeemanagementapp.repositories.UserRepository;
 import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapper;
+import com.bachokhachvani.employeemanagementapp.utils.EmployeeMapperMap;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
     private final UserRepository userRepository;
+    private final EmployeeMapperMap employeeMapperMap;
 
     public List<EmployeeModel> allEmployees(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -32,7 +36,8 @@ public class EmployeeService {
 
     public void addEmployee(EmployeeDTO employeeDTO) {
         if (employeeRepository.findById(employeeMapper.currentUserID()).isEmpty()) {
-            var employee = employeeMapper.fromDTO(employeeDTO, employeeMapper.currentUserID(), new EmployeeModel());
+            EmployeeModel employee = employeeMapperMap.fromDTO(employeeDTO);
+            employee.setId(employeeMapper.currentUserID());
             employeeRepository.save(employee);
         } else {
             throw new DetailsChangeRestrictedException("you can't change your details");
@@ -56,7 +61,8 @@ public class EmployeeService {
 
     public void updateEmployee(EmployeeDTO employeeDTO, Integer employeeID) {
         var employee = employeeRepository.findById(employeeID).orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
-        employee = employeeMapper.fromDTO(employeeDTO, employeeID, employee);
+        employee = employeeMapperMap.fromDTO(employeeDTO);
+        employee.setId(employeeID);
         if (Objects.equals(employeeMapper.currentUserID(), employeeID)) {
             throw new DetailsChangeRestrictedException("You can't change your details");
         }
@@ -66,7 +72,7 @@ public class EmployeeService {
 
     public EmployeeDTO findEmployeeById(Integer employeeID) {
         var employee = employeeRepository.findById(employeeID).orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
-        var employeeDTO = employeeMapper.toDTO(employee);
+        var employeeDTO = employeeMapperMap.toDTO(employee);
         if (employee.getManager() == null) {
             employeeDTO.setManagerName(null);
         } else {
@@ -95,13 +101,19 @@ public class EmployeeService {
 
     public EmployeeDTO getCurrentEmployeeDetails() {
         var employee = employeeRepository.findById(employeeMapper.currentUserID()).orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
-        var employeeDTO = employeeMapper.toDTO(employee);
+        var employeeDTO = employeeMapperMap.toDTO(employee);
         if (employee.getManager() == null) {
             employeeDTO.setManagerName(null);
         } else {
             employeeDTO.setManagerName(employee.getManager().getName());
         }
         return employeeDTO;
+    }
+
+    private int currentUserID(){
+        return userRepository.findByUsername(SecurityContextHolder
+                        .getContext().getAuthentication().getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found")).getUserId();
     }
 
 }

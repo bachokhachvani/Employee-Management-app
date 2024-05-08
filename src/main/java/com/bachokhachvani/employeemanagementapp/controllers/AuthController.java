@@ -2,6 +2,7 @@ package com.bachokhachvani.employeemanagementapp.controllers;
 
 import com.bachokhachvani.employeemanagementapp.domain.AuthResponseDTO;
 import com.bachokhachvani.employeemanagementapp.domain.LoginDTO;
+import com.bachokhachvani.employeemanagementapp.domain.Role;
 import com.bachokhachvani.employeemanagementapp.domain.UserDTO;
 import com.bachokhachvani.employeemanagementapp.models.UserModel;
 import com.bachokhachvani.employeemanagementapp.security.TokenGenerator;
@@ -9,6 +10,7 @@ import com.bachokhachvani.employeemanagementapp.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +32,16 @@ public class AuthController {
         userModel.setUsername(user.getUsername());
         userModel.setPassword(user.getPassword());
 
+        userService.addUser(userModel, Role.EMPLOYEE);
+        return ResponseEntity.ok("User Created Successfully!");
+    }
+
+    @PostMapping("/add-admin")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    public ResponseEntity<String> registerAdmin(@Valid @RequestBody UserDTO user) {
+        UserModel userModel = new UserModel();
+        userModel.setUsername(user.getUsername());
+        userModel.setPassword(user.getPassword());
         userService.addUser(userModel, user.getRoleName());
         return ResponseEntity.ok("User Created Successfully!");
     }

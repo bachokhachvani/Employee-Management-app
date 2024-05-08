@@ -20,11 +20,11 @@ public class EmployeeController {
     @GetMapping("/employee")
     public List<EmployeeModel> allEmployees(@RequestParam(value = "page", defaultValue = "0") int page,
                                             @RequestParam(value = "size", defaultValue = "20") int size) {
-        return employeeService.allEmployees(page,size);
+        return employeeService.allEmployees(page, size);
     }
 
     @PostMapping("/add-details")
-    public ResponseEntity<?> addEmployee(@RequestBody EmployeeDTO employeeDTO) {
+    public ResponseEntity<?> addEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
         employeeService.addEmployee(employeeDTO);
         return ResponseEntity.ok(employeeDTO);
     }
@@ -42,7 +42,7 @@ public class EmployeeController {
 
     @PatchMapping("/update-employee/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    public ResponseEntity<String> updateEmployee(@PathVariable Integer id, @RequestBody EmployeeDTO employeeDTO) {
+    public ResponseEntity<String> updateEmployee(@PathVariable Integer id, @Valid @RequestBody EmployeeDTO employeeDTO) {
         employeeService.updateEmployee(employeeDTO, id);
         return ResponseEntity.ok("Updated");
     }
